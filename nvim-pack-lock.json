@@ -1,0 +1,56 @@
+{
+  "plugins": {
+    "fzf-lua": {
+      "rev": "9f0432fdd7825ab163520045831a40b6df82ea28",
+      "src": "https://github.com/ibhagwan/fzf-lua"
+    },
+    "gitsigns.nvim": {
+      "rev": "0d797daee85366bc242580e352a4f62d67557b84",
+      "src": "https://github.com/lewis6991/gitsigns.nvim"
+    },
+    "harpoon": {
+      "rev": "1bc17e3e42ea3c46b33c0bbad6a880792692a1b3",
+      "src": "https://github.com/theprimeagen/harpoon"
+    },
+    "jellybeans.nvim": {
+      "rev": "29f4c17981f70c0919c2f3f918da9a89f906bf37",
+      "src": "https://github.com/wtfox/jellybeans.nvim"
+    },
+    "mini.completion": {
+      "rev": "09884c629cac1a8c999ffb6c57dc8424450aea5e",
+      "src": "https://github.com/nvim-mini/mini.completion"
+    },
+    "nvim-lspconfig": {
+      "rev": "bedca8b426b2fee0ccac596d167d71bbe971253f",
+      "src": "https://github.com/neovim/nvim-lspconfig"
+    },
+    "nvim-treesitter": {
+      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "quicker.nvim": {
+      "rev": "063cc44da1eef8681bbd653b29d3bc961780886a",
+      "src": "https://github.com/stevearc/quicker.nvim"
+    },
+    "telescope.nvim": {
+      "rev": "7d324792b7943e4aa16ad007212e6acc6f9fe335",
+      "src": "https://github.com/nvim-telescope/telescope.nvim"
+    },
+    "undotree": {
+      "rev": "6fa6b57cda8459e1e4b2ca34df702f55242f4e4d",
+      "src": "https://github.com/mbbill/undotree"
+    },
+    "vim-be-good": {
+      "rev": "0ae3de14eb8efc6effe7704b5e46495e91931cc5",
+      "src": "https://github.com/ThePrimeagen/vim-be-good"
+    },
+    "vim-fugitive": {
+      "rev": "3b753cf8c6a4dcde6edee8827d464ba9b8c4a6f0",
+      "src": "https://github.com/tpope/vim-fugitive"
+    },
+    "which-key.nvim": {
+      "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
+      "src": "https://github.com/folke/which-key.nvim"
+    }
+  }
+}
