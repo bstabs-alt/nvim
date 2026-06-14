@@ -5,13 +5,16 @@ require("ineednrg.plugins")
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
+local nrg_group = augroup('ineednrg', {})
+local yank_group = augroup('HighlightYank', {})
+
 vim.api.nvim_create_user_command("GitBlameLine", function()
 	local line_number = vim.fn.line(".") -- Get curr line numb. See :h line()
 	local filename = vim.api.nvim_buf_get_name(0)
 	print(vim.system({ "git", "blame", "-L", line_number .. ",+1", filename }):wait().stdout)
 end, { desc = "Print the git blame for the current line" })
 
-vim.cmd("packadd! nohlsearch")
+--vim.cmd("packadd! nohlsearch")
 
 vim.filetype.add({
 	extension = {
@@ -27,6 +30,7 @@ autocmd("UIEnter", {
 
 -- Highlight when yanking (copying) text -- Try with `yap`
 autocmd("TextYankPost", {
+    group = yank_group,
 	desc = "Highlight when yanking (copying) text",
 	callback = function()
 		vim.hl.on_yank()
@@ -36,6 +40,7 @@ autocmd("TextYankPost", {
 -- vertical help - [:vert h <keyword>]
 --autocmd("FileType", {})
 
+if vim.fn.executable('fcitx5-remote') == 1 then
 Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
 autocmd("InsertLeave", {
 	desc = "Inactivate IME mode",
@@ -55,9 +60,16 @@ autocmd("InsertEnter", {
 		end
 	end,
 })
+end
+
+	autocmd("BufWritePre", {
+				group = nrg_group,
+                pattern = '*',
+                command = [[%s/\s\+$//e]],
+			})
 
 autocmd("LspAttach", {
-	group = augroup("nrg.lsp", {}),
+	group = nrg_group,
 	callback = function(ev)
 		local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
 
@@ -71,7 +83,7 @@ autocmd("LspAttach", {
 			and client:supports_method("textDocument/formatting")
 		then
 			autocmd("BufWritePre", {
-				group = augroup("nrg.lsp", { clear = false }),
+				group = nrg_group,
 				buffer = ev.buf,
 				callback = function()
 					vim.lsp.buf.format({ bufnr = ev.buf, id = client.id, timeout_ms = 1000 })
@@ -80,3 +92,6 @@ autocmd("LspAttach", {
 		end
 	end,
 })
+
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 25

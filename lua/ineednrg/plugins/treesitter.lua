@@ -6,6 +6,7 @@ return {
 				install_dir = vim.fn.stdpath("data") .. "/site",
 				ensure_installed = {
 					"bash",
+					"c",
 					"go",
 					"javascript",
 					"lua",
