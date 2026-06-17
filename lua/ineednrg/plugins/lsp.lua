@@ -1,19 +1,19 @@
 return {
-    src = "neovim/nvim-lspconfig",
+    src = "https://github.com/neovim/nvim-lspconfig"
+    ,
     data = {
         setup = function()
-            vim.pack.add({
-                "https://github.com/neovim/nvim-lspconfig"
-                --"https://github.com/j-hui/fidget.nvim",
-                --"https://github.com/hrsh7th/nvim-cmp",
-                --"https://github.com/hrsh7th/cmp-nvim-lsp",
-                --"https://github.com/hrsh7th/cmp-buffer",
-                --"https://github.com/hrsh7th/cmp-path",
-                --"https://github.com/hrsh7th/cmp-cmdline",
-                --"https://github.com/hrsh7th/cmp-nvim-lua",
-                --"https://github.com/L3MON4D3/LuaSnip",
-                --"https://github.com/saadparwaiz1/cmp_luasnip",
-            })
+            --vim.pack.add({
+            --"https://github.com/j-hui/fidget.nvim",
+            --"https://github.com/hrsh7th/nvim-cmp",
+            --"https://github.com/hrsh7th/cmp-nvim-lsp",
+            --"https://github.com/hrsh7th/cmp-buffer",
+            --"https://github.com/hrsh7th/cmp-path",
+            --"https://github.com/hrsh7th/cmp-cmdline",
+            --"https://github.com/hrsh7th/cmp-nvim-lua",
+            --"https://github.com/L3MON4D3/LuaSnip",
+            --"https://github.com/saadparwaiz1/cmp_luasnip",
+            --})
 
             vim.lsp.enable({
                 "bashls",
