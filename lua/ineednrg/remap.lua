@@ -1,7 +1,5 @@
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "netrw" })
-
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>") -- exit terminal mode
 
@@ -15,9 +13,8 @@ vim.keymap.set({ "n" }, "<A-j>", "<C-w>j")
 vim.keymap.set({ "n" }, "<A-k>", "<C-w>k")
 vim.keymap.set({ "n" }, "<A-l>", "<C-w>l")
 
-vim.keymap.set("n", "<leader><leader>", function()
-    vim.cmd("so")
-end, { desc = "source" })
+vim.keymap.set("n", "<leader><leader>", function() vim.cmd("so") end, { desc = "source" })
 
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "netrw" })
 vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")

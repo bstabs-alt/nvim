@@ -6,7 +6,6 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-
 vim.opt.breakindent = true
 --vim.opt.wrap = false
 
@@ -21,14 +20,15 @@ vim.opt.undofile = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
-vim.opt.updatetime = 50
+vim.opt.updatetime = 500
 vim.opt.timeoutlen = 300
+vim.opt.laststatus = 2
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 vim.opt.inccommand = "split" -- preview substitute
-vim.opt.cursorline = true -- Highlight the line where the cursor is on.
-vim.opt.scrolloff = 8 -- Keep this many screen lines above/below the cursor.
+vim.opt.cursorline = false   -- Highlight the line where the cursor is on.
+vim.opt.scrolloff = 8        -- Keep this many screen lines above/below the cursor.
 vim.opt.confirm = true
 vim.opt.isfname:append("@-@")
 --vim.opt.colorcolumn = "80"
