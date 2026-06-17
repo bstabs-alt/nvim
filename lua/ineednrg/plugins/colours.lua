@@ -6,4 +6,11 @@ function ColourDatBoi(color)
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 end
 
-ColourDatBoi()
+return {
+    src = "wtfox/jellybeans.nvim",
+    data = {
+        setup = function()
+            ColourDatBoi()
+        end,
+    },
+}
