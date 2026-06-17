@@ -7,7 +7,7 @@ function ColourDatBoi(color)
 end
 
 return {
-    src = "wtfox/jellybeans.nvim",
+    src = "https://github.com/wtfox/jellybeans.nvim",
     data = {
         setup = function()
             ColourDatBoi()
