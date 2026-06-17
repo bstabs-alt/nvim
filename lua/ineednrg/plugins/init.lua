@@ -4,25 +4,25 @@ if vim.fn.has("nvim-0.12") then
     --require('quicker').setup {}
     --require('gitsigns').setup {}
     local colours = require("ineednrg.plugins.colours")
-    local conform = require("ineednrg.plugins.conform")
-    local telescope = require("ineednrg.plugins.telescope")
+    --local conform = require("ineednrg.plugins.conform")
+    --local telescope = require("ineednrg.plugins.telescope")
     local treesitter = require("ineednrg.plugins.treesitter")
     --local harpoon = require("ineednrg.plugins.harpoon")
     local undotree = require("ineednrg.plugins.undotree")
     local fugitive = require("ineednrg.plugins.fugitive")
     local lsp = require("ineednrg.plugins.lsp")
-    local which_key = require("ineednrg.plugins.which_key")
+    --local which_key = require("ineednrg.plugins.which_key")
 
     vim.pack.add({
         colours,
-        conform,
-        telescope,
+        --conform,
+        --telescope,
         treesitter,
         --harpoon,
         undotree,
         fugitive,
         lsp,
-        which_key,
+        --which_key,
     }, {
         load = function(plug)
             local setup = (plug.spec.data or {}).setup

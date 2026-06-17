@@ -1,3 +1,3 @@
-return {
-	src = "https://github.com/folke/which-key.nvim",
-}
+--return {
+--	src = "https://github.com/folke/which-key.nvim",
+--}
