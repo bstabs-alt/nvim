@@ -1,6 +1,5 @@
 return {
-    src = "https://github.com/neovim/nvim-lspconfig"
-    ,
+    src = "https://github.com/neovim/nvim-lspconfig",
     data = {
         setup = function()
             --vim.pack.add({
@@ -98,7 +97,6 @@ return {
             vim.g.zig_fmt_autosave = 0
 
             --local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
             --cmp.setup({
             --    snippet = {
             --        expand = function(args)
@@ -124,7 +122,6 @@ return {
             --        ["<C-Space>"] = cmp.mapping.complete(),
             --    }),
             --})
-
             --cmp.setup.cmdline(":", {
             --    mapping = cmp.mapping.preset.cmdline(),
             --    sources = cmp.config.sources({
@@ -134,6 +131,8 @@ return {
             --    }),
             --    matching = { disallow_symbol_nonprefix_matching = false },
             --})
+
+            --vim.lsp.buf.hover { border = "single", max_height = 25, max_width = 120 }
 
             vim.diagnostic.config({
                 float = {

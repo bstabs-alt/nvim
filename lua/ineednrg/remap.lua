@@ -18,3 +18,6 @@ vim.keymap.set("n", "<leader><leader>", function() vim.cmd("so") end, { desc = "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "netrw" })
 vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
+
+-- <gc>: Toggle comment
+-- <gcc>: Toggle comment line
