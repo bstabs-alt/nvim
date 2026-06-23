@@ -1,5 +1,6 @@
 require("ineednrg.remap")
 require("ineednrg.set")
+require("ineednrg.lsp")
 require("ineednrg.plugins")
 
 local augroup = vim.api.nvim_create_augroup
@@ -10,6 +11,7 @@ local nrg_group = augroup('ineednrg', {})
 local yank_group = augroup('HighlightYank', {})
 
 vim.filetype.add({ extension = { templ = "templ" } })
+vim.filetype.add({ extension = { tfstate = "json" } })
 
 usercmd("GitBlameLine", function()
     local line_number = vim.fn.line(".") -- Get curr line numb. See :h line()
@@ -75,6 +77,8 @@ autocmd("LspAttach", {
             vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
             vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
             vim.keymap.set("n", "gf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
+            vim.keymap.set("n", "<leader>S", vim.lsp.buf.type_definition, { desc = "vim.lsp.buf.type_definiton" })
+            vim.keymap.set("n", "<leader>D", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
             -- defaults
             --vim.keymap.set("n", "gra", vim.lsp.buf.code_action)
             --vim.keymap.set("n", "gri", vim.lsp.buf.implementation)

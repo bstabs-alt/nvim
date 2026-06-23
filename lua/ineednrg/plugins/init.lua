@@ -1,37 +1,33 @@
---vim.cmd("packadd! nohlsearch")
 if vim.fn.has("nvim-0.12") then
-    --require('quicker').setup {}
-    --require('gitsigns').setup {}
-    local colours = require("ineednrg.plugins.colours")
-    --local conform = require("ineednrg.plugins.conform")
-    local fzf = require("ineednrg.plugins.fzf")
-    --local mini = require("ineednrg.plugins.mini")
-    --local telescope = require("ineednrg.plugins.telescope")
-    local treesitter = require("ineednrg.plugins.treesitter")
-    --local harpoon = require("ineednrg.plugins.harpoon")
-    local undotree = require("ineednrg.plugins.undotree")
-    local fugitive = require("ineednrg.plugins.fugitive")
-    local lsp = require("ineednrg.plugins.lsp")
-    local which_key = require("ineednrg.plugins.which_key")
+    local specs = {
+        require("ineednrg.plugins.treesitter"),
+    }
 
-    vim.pack.add({
-        colours,
-        --conform,
-        fugitive,
-        fzf,
-        --mini,
-        --telescope,
-        treesitter,
-        --harpoon,
-        undotree,
-        lsp,
-        which_key,
-    }, {
+    if vim.env.NVIM_PROFILE == "dev" then
+        specs = vim.list_extend(specs, {
+            require("ineednrg.plugins.lsp"),
+            require("ineednrg.plugins.colours"),
+            require("ineednrg.plugins.fzf"),
+            require("ineednrg.plugins.fugitive"),
+            require("ineednrg.plugins.undotree"),
+            require("ineednrg.plugins.which_key"),
+            --require("ineednrg.plugins.conform"),
+            --require("ineednrg.plugins.mini"),
+            --require("ineednrg.plugins.telescope"),
+            --require("ineednrg.plugins.harpoon"),
+        })
+    end
+
+    vim.pack.add(specs, {
         load = function(plug)
-            local setup = (plug.spec.data or {}).setup
             vim.cmd.packadd(plug.spec.name)
-            if setup ~= nil and type(setup) == "function" then
-                setup()
+            local setup = (plug.spec.data or {}).setup
+            if type(setup) == "function" then
+                local ok, err = pcall(setup)
+                if not ok then
+                    local msg = "plugin setup failed: " .. plug.spec.name .. ": " .. tostring(err)
+                    vim.notify(msg, vim.log.levels.WARN)
+                end
             end
         end,
     })

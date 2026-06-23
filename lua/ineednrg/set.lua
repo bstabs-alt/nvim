@@ -34,14 +34,21 @@ vim.opt.confirm = true
 vim.opt.isfname:append("@-@")
 --vim.opt.colorcolumn = "80"
 
---local symbols = { "─", "│", "╭", "╮", "╰", "╯" }
-local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
+local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
+--local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
 vim.o.winborder = table.concat(symbols, ',')
-vim.o.pumborder = "rounded"
+vim.o.pumborder = table.concat(symbols, ',') --"rounded"
 vim.o.pumblend = 0
 vim.o.pumheight = 8
 
-vim.o.completeopt = "menu,menuone,noselect,popup"
+vim.o.completeopt = "menu,menuone,noselect,popup,fuzzy"
 
-vim.o.showtabline = 2
+vim.o.showtabline = 1
 vim.o.showmode = false
+
+vim.opt.path:append("**") -- :find searches recursively from cwd
+vim.opt.wildmenu = true
+vim.opt.wildmode = "longest:full,full"
+vim.opt.wildignore:append({ "*/.git/*", "*/node_modules/*", "*/target/*" })
+
+--pcall(vim.cmd.colorscheme, "habamax")

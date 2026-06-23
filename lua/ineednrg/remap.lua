@@ -13,11 +13,18 @@ vim.keymap.set({ "n" }, "<A-j>", "<C-w>j")
 vim.keymap.set({ "n" }, "<A-k>", "<C-w>k")
 vim.keymap.set({ "n" }, "<A-l>", "<C-w>l")
 
-vim.keymap.set("n", "<leader><leader>", function() vim.cmd("so") end, { desc = "source" })
+vim.keymap.set("n", "<leader><leader>", function()
+    vim.cmd("so")
+end, { desc = "source" })
 
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "netrw" })
+-- builtin fuzzy-ish find; fzf-lua overrides this in personal tier
+vim.keymap.set("n", "<leader>pf", ":find ", { desc = "builtin find" })
 vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
 
 -- <gc>: Toggle comment
 -- <gcc>: Toggle comment line
+
+-- Windows terminal paste from clipboard
+vim.keymap.set("i", "<C-v>", "<C-r>+", { desc = "WinTerm Paste" })
