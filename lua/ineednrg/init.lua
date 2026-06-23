@@ -33,7 +33,14 @@ autocmd("TextYankPost", {
 })
 
 -- vertical help - [:vert h <keyword>]
---autocmd("FileType", {})
+autocmd("FileType", {
+    pattern = "help",
+    callback = function()
+        local w = vim.fn.winwidth(0)
+        local h = vim.fn.winheight(0)
+        if w >= h then vim.cmd [[wincmd L]] end
+    end
+})
 
 if vim.fn.executable('fcitx5-remote') == 1 then
     Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
@@ -90,6 +97,12 @@ autocmd("LspAttach", {
             --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
             vim.keymap.set("n", "[d", vim.diagnostic.get_prev, { desc = "vim.diagnostic.get_prev" })
             vim.keymap.set("n", "]d", vim.diagnostic.get_next, { desc = "vim.diagnostic.get_next" })
+            vim.keymap.set("i", "<BS>", function()
+                if vim.fn.pumvisible() == 1 then
+                    return "<BS><C-x><C-o>"
+                end
+                return "<BS>"
+            end, { expr = true, noremap = true })
         end
 
         vim.lsp.completion.enable(true, client.id, ev.buf, {

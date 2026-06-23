@@ -42,6 +42,7 @@ vim.o.pumblend = 0
 vim.o.pumheight = 8
 
 vim.o.completeopt = "menu,menuone,noselect,popup,fuzzy"
+vim.o.complete = ""
 
 vim.o.showtabline = 1
 vim.o.showmode = false
