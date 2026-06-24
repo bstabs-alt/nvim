@@ -21,13 +21,10 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
 
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "netrw" })
-vim.keymap.set("n", "<leader>pg", vim.cmd.Git, { desc = "git" })
-
+vim.keymap.set("n", "<leader>pf", ":find ", { desc = "builtin find" })
 vim.keymap.set("n", "<leader>pb", ":b ", { desc = "switch buffer" })
 vim.keymap.set("n", "<leader>ph", vim.cmd.bprevious, { desc = "prev buffer" })
 vim.keymap.set("n", "<leader>pl", vim.cmd.bnext, { desc = "next buffer" })
-
-vim.keymap.set("n", "<leader>pf", ":find ", { desc = "builtin find" })
 
 vim.keymap.set("n", "<leader>ps", function()
     local q = vim.fn.input("grep > ")

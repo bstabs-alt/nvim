@@ -70,6 +70,12 @@ autocmd("BufWritePre", {
     command = [[%s/\s\+$//e]],
 })
 
+autocmd("QuickFixCmdPost", {
+    group = nrg_group,
+    pattern = { "grep", "grepadd" },
+    command = "cwindow",
+})
+
 --vim.api.nvim_create_autocmd('ColorScheme', {
 --    callback = function()
 --        vim.api.nvim_set_hl(0, 'LspReferenceTarget', {})
@@ -86,6 +92,7 @@ autocmd("LspAttach", {
             vim.keymap.set("n", "gf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
             vim.keymap.set("n", "<leader>S", vim.lsp.buf.type_definition, { desc = "vim.lsp.buf.type_definiton" })
             vim.keymap.set("n", "<leader>D", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
+            vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
             -- defaults
             --vim.keymap.set("n", "gra", vim.lsp.buf.code_action)
             --vim.keymap.set("n", "gri", vim.lsp.buf.implementation)
@@ -95,8 +102,8 @@ autocmd("LspAttach", {
             --vim.keymap.set("n", "grx", vim.lsp.codelens.run)
             --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
             --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
-            vim.keymap.set("n", "[d", vim.diagnostic.get_prev, { desc = "vim.diagnostic.get_prev" })
-            vim.keymap.set("n", "]d", vim.diagnostic.get_next, { desc = "vim.diagnostic.get_next" })
+            --vim.keymap.set("n", "[d", vim.diagnostic.get_prev, { desc = "vim.diagnostic.get_prev" })
+            --vim.keymap.set("n", "]d", vim.diagnostic.get_next, { desc = "vim.diagnostic.get_next" })
             vim.keymap.set("i", "<BS>", function()
                 if vim.fn.pumvisible() == 1 then
                     return "<BS><C-x><C-o>"
