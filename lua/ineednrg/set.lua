@@ -34,10 +34,11 @@ vim.opt.confirm = true
 vim.opt.isfname:append("@-@")
 --vim.opt.colorcolumn = "80"
 
-local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
 --local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
-vim.o.winborder = table.concat(symbols, ',')
-vim.o.pumborder = table.concat(symbols, ',') --"rounded"
+local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
+local sym_str = table.concat(symbols, ',')
+vim.o.winborder = sym_str
+vim.o.pumborder = sym_str
 vim.o.pumblend = 0
 vim.o.pumheight = 8
 
@@ -50,6 +51,12 @@ vim.o.showmode = false
 vim.opt.path:append("**") -- :find searches recursively from cwd
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
+vim.o.wildoptions = "fuzzy,pum,tagfile"
 vim.opt.wildignore:append({ "*/.git/*", "*/node_modules/*", "*/target/*" })
+
+if vim.fn.executable("rg") then
+    vim.o.grepprg = "rg --vimgrep --smart-case"
+    vim.o.grepformat = "%f:%l:%c:%m"
+end
 
 --pcall(vim.cmd.colorscheme, "habamax")
