@@ -38,7 +38,9 @@ autocmd("FileType", {
     callback = function()
         local w = vim.fn.winwidth(0)
         local h = vim.fn.winheight(0)
-        if w >= h then vim.cmd [[wincmd L]] end
+        if w >= h then
+            vim.cmd [[wincmd L]] -- L key (Right)
+        end
     end
 })
 
@@ -76,46 +78,66 @@ autocmd("QuickFixCmdPost", {
     command = "cwindow",
 })
 
---vim.api.nvim_create_autocmd('ColorScheme', {
---    callback = function()
---        vim.api.nvim_set_hl(0, 'LspReferenceTarget', {})
---    end,
---})
+local _complete_set = vim.api.nvim__complete_set
+---@diagnostic disable-next-line: duplicate-set-field
+vim.api.nvim__complete_set = function(index, opts)
+    local result = _complete_set(index, opts)
+    if result and result.winid and vim.api.nvim_win_is_valid(result.winid) then
+        ---@type vim.api.keyset.win_config
+        local cfg = {
+            border = vim.split(vim.o.winborder, ","),
+            width = vim.api.nvim_win_get_width(result.winid) - 2,
+        }
+        cfg = vim.tbl_deep_extend("force", vim.api.nvim_win_get_config(result.winid), cfg)
+        vim.api.nvim_win_set_config(result.winid, cfg)
+    end
+    return result
+end
 
 autocmd("LspAttach", {
     group = nrg_group,
     callback = function(ev)
         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
-        if client:supports_method("textDocument/implementation") then
-            vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
-            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
-            vim.keymap.set("n", "gf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
-            vim.keymap.set("n", "<leader>S", vim.lsp.buf.type_definition, { desc = "vim.lsp.buf.type_definiton" })
-            vim.keymap.set("n", "<leader>D", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
-            vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
-            -- defaults
-            --vim.keymap.set("n", "gra", vim.lsp.buf.code_action)
-            --vim.keymap.set("n", "gri", vim.lsp.buf.implementation)
-            --vim.keymap.set("n", "grn", vim.lsp.buf.rename)
-            --vim.keymap.set("n", "grr", vim.lsp.buf.references)
-            --vim.keymap.set("n", "grt", vim.lsp.buf.type_definition)
-            --vim.keymap.set("n", "grx", vim.lsp.codelens.run)
-            --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
-            --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
-            --vim.keymap.set("n", "[d", vim.diagnostic.get_prev, { desc = "vim.diagnostic.get_prev" })
-            --vim.keymap.set("n", "]d", vim.diagnostic.get_next, { desc = "vim.diagnostic.get_next" })
+        local buf = ev.buf
+        --vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
+        --vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
+        --vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
+        --vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
+        --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
+        vim.keymap.set("n", "grh", function()
+            vim.lsp.inlay_hint.enable(vim.lsp.inlay_hint.is_enabled())
+        end, { desc = "toggle inlay hints" })
+        vim.keymap.set("n", "grc", function()
+            vim.lsp.inline_completion.enable(vim.lsp.inline_completion.is_enabled())
+        end, { desc = "toggle inline completion" })
+        vim.keymap.set("n", "grc", function()
+            vim.lsp.codelens.enable(vim.lsp.codelens.is_enabled())
+        end, { desc = "toggle codelens" })
+        -- defaults
+        --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
+        --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
+        --vim.keymap.set("n", "[d", vim.diagnostic.get_prev)
+        --vim.keymap.set("n", "]d", vim.diagnostic.get_next)
+        if client:supports_method("textDocument/completion") then
+            vim.lsp.completion.enable(true, client.id, buf, {
+                autotrigger = true,
+                --convert = function(item) return { abbr = item.label:gsub('%b()', '') } end
+            })
             vim.keymap.set("i", "<BS>", function()
-                if vim.fn.pumvisible() == 1 then
-                    return "<BS><C-x><C-o>"
-                end
+                if vim.fn.pumvisible() == 1 then return "<BS><C-x><C-o>" end
                 return "<BS>"
             end, { expr = true, noremap = true })
         end
 
-        vim.lsp.completion.enable(true, client.id, ev.buf, {
-            autotrigger = true,
-            convert = function(item)
-                return { abbr = item.label:gsub('%b()', '') }
+        autocmd("LspProgress", {
+            group = nrg_group,
+            buffer = buf,
+            callback = function(ev2)
+                local val = ev2.data.params.value
+                local status = vim.ui.progress_status()
+                vim.api.nvim_echo({ { val.message or "done" } }, false, {
+                    status = status,
+                })
             end
         })
 
@@ -124,9 +146,9 @@ autocmd("LspAttach", {
         then
             autocmd("BufWritePre", {
                 group = nrg_group,
-                buffer = ev.buf,
+                buffer = buf,
                 callback = function()
-                    vim.lsp.buf.format({ bufnr = ev.buf, id = client.id, timeout_ms = 1000 })
+                    vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
                 end,
             })
         end

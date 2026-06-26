@@ -32,13 +32,13 @@ vim.opt.cursorline = true    -- Highlight the line where the cursor is on.
 vim.opt.scrolloff = 8        -- Keep this many screen lines above/below the cursor.
 vim.opt.confirm = true
 vim.opt.isfname:append("@-@")
---vim.opt.colorcolumn = "80"
 
 --local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
 local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
-local sym_str = table.concat(symbols, ',')
-vim.o.winborder = sym_str
-vim.o.pumborder = sym_str
+local border = table.concat(symbols, ',')
+vim.o.winborder = border
+vim.o.winblend = 0
+vim.o.pumborder = border
 vim.o.pumblend = 0
 vim.o.pumheight = 8
 
@@ -58,5 +58,3 @@ if vim.fn.executable("rg") then
     vim.o.grepprg = "rg --vimgrep --smart-case"
     vim.o.grepformat = "%f:%l:%c:%m"
 end
-
---pcall(vim.cmd.colorscheme, "habamax")
