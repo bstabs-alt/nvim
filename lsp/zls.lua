@@ -9,6 +9,9 @@ return {
             enable_inlay_hints = true,
             enable_snippets = true,
             warn_style = true,
+            inlay_hints_hide_redundant_param_names = true,
+            include_at_in_builtins = true,
+            use_comptime_interpreter = true,
         },
     },
 }

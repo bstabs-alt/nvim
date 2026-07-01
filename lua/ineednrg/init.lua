@@ -19,10 +19,14 @@ usercmd("GitBlameLine", function()
     print(vim.system({ "git", "blame", "-L", line_number .. ",+1", filename }):wait().stdout)
 end, { desc = "Print the git blame for the current line" })
 
+usercmd("RunZig", function()
+    local filename = vim.api.nvim_buf_get_name(0)
+    print(vim.system({ "zig", "run", filename }):wait().stdout)
+end, { desc = "Run code" })
+
+
 autocmd("UIEnter", {
-    callback = function()
-        vim.o.clipboard = "unnamed,unnamedplus"
-    end,
+    callback = function() vim.o.clipboard = "unnamed,unnamedplus" end,
 })
 
 -- Highlight when yanking (copying) text -- Try with `yap`
@@ -34,19 +38,20 @@ autocmd("TextYankPost", {
 
 -- vertical help - [:vert h <keyword>]
 autocmd("FileType", {
+    group = nrg_group,
     pattern = "help",
     callback = function()
         local w = vim.fn.winwidth(0)
         local h = vim.fn.winheight(0)
-        if w >= h then
-            vim.cmd [[wincmd L]] -- L key (Right)
-        end
+        -- L key (Right)
+        if w >= h then vim.cmd [[wincmd L]] end
     end
 })
 
 if vim.fn.executable('fcitx5-remote') == 1 then
     Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
     autocmd("InsertLeave", {
+        group = nrg_group,
         desc = "Inactivate IME mode",
         pattern = "*",
         callback = function()
@@ -55,10 +60,10 @@ if vim.fn.executable('fcitx5-remote') == 1 then
         end,
     })
     autocmd("InsertEnter", {
+        group = nrg_group,
         desc = "Reactivate IME mode",
         pattern = "*",
         callback = function()
-            print("InsertEnter: ", Fcitx5state)
             if Fcitx5state == "2" then
                 vim.system({ "fcitx5-remote", "-o" })
             end
@@ -78,41 +83,56 @@ autocmd("QuickFixCmdPost", {
     command = "cwindow",
 })
 
-local _complete_set = vim.api.nvim__complete_set
+local function set_floating_win_cfg(winid)
+    if winid and vim.api.nvim_win_is_valid(winid) then
+        vim.api.nvim_win_set_config(winid, {
+            border = vim.split(vim.o.winborder, ",") or "rounded",
+            width = math.min(70, vim.api.nvim_win_get_width(winid)),
+            height = math.min(15, vim.api.nvim_win_text_height(winid, {}).all),
+            style = "minimal",
+        })
+    end
+end
+
+-- Add border to first completion item without having to add a delay on CompleteChanged
+local complete_set = vim.api.nvim__complete_set
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.api.nvim__complete_set = function(index, opts)
-    local result = _complete_set(index, opts)
-    if result and result.winid and vim.api.nvim_win_is_valid(result.winid) then
-        ---@type vim.api.keyset.win_config
-        local cfg = {
-            border = vim.split(vim.o.winborder, ","),
-            width = vim.api.nvim_win_get_width(result.winid) - 2,
-        }
-        cfg = vim.tbl_deep_extend("force", vim.api.nvim_win_get_config(result.winid), cfg)
-        vim.api.nvim_win_set_config(result.winid, cfg)
-    end
-    return result
+    local item = complete_set(index, opts)
+    if item then set_floating_win_cfg(item.winid) end
+    return item
 end
+
+autocmd("CompleteChanged", {
+    group = nrg_group,
+    callback = function()
+        local info = vim.fn.complete_info({ "selected" })
+        set_floating_win_cfg(info.preview_winid)
+    end
+})
 
 autocmd("LspAttach", {
     group = nrg_group,
     callback = function(ev)
         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
         local buf = ev.buf
-        --vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
+        vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
         --vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
-        --vim.keymap.set("n", "<leader>gf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
-        --vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
+        vim.keymap.set("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
+        vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
         --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
-        vim.keymap.set("n", "grh", function()
-            vim.lsp.inlay_hint.enable(vim.lsp.inlay_hint.is_enabled())
-        end, { desc = "toggle inlay hints" })
-        vim.keymap.set("n", "grc", function()
-            vim.lsp.inline_completion.enable(vim.lsp.inline_completion.is_enabled())
-        end, { desc = "toggle inline completion" })
-        vim.keymap.set("n", "grc", function()
-            vim.lsp.codelens.enable(vim.lsp.codelens.is_enabled())
-        end, { desc = "toggle codelens" })
+        vim.keymap.set("n", "glh", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end, { desc = "toggle inlay hints", buf = buf })
+        vim.keymap.set("n", "glc", function()
+            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled())
+        end, { desc = "toggle codelens", buf = buf })
+        vim.keymap.set("n", "gli", function()
+            vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled())
+        end, { expr = true, desc = "inline completion" })
+        vim.keymap.set("i", "<Tab>", function()
+            if not vim.lsp.inline_completion.get() then return "<Tab>" end
+        end, { expr = true, desc = "inline completion" })
         -- defaults
         --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
         --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
@@ -132,12 +152,11 @@ autocmd("LspAttach", {
         autocmd("LspProgress", {
             group = nrg_group,
             buffer = buf,
-            callback = function(ev2)
-                local val = ev2.data.params.value
-                local status = vim.ui.progress_status()
-                vim.api.nvim_echo({ { val.message or "done" } }, false, {
-                    status = status,
-                })
+            callback = function(lsp_ev)
+                local val = lsp_ev.data.params.value
+                _G.set_lsp_progress(lsp_ev.data.client_id, client.name, val.message)
+                --_G.lsp_progress[lsp_ev.data.client_id] = client.name .. " [" .. (val.message or "A") .. "]"
+                vim.cmd("redrawstatus")
             end
         })
 

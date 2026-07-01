@@ -17,11 +17,40 @@ vim.lsp.enable({
     --"helm","omnisharp","tailwindcss",
 })
 
+local level = vim.diagnostic.severity
+local signs = {
+    [level.ERROR] = "E",
+    [level.WARN] = "W",
+    [level.INFO] = "I",
+    [level.HINT] = "H",
+}
+local hl_map = {
+    [level.ERROR] = "DiagnosticSignError",
+    [level.WARN] = "DiagnosticSignWarn",
+    [level.INFO] = "DiagnosticSignInfo",
+    [level.HINT] = "DiagnosticSignHint",
+}
+
 vim.diagnostic.config({
+    severity_sort = true,
+    virtual_text = true,
     float = {
         prefix = "",
         header = "",
         source = true,
         focusable = false,
     },
+    status = {
+        format = function(severity_counts)
+            local items = {}
+            for severity in ipairs(vim.diagnostic.severity) do
+                local count = severity_counts[severity] or 0
+                if count > 0 then
+                    table.insert(items, ("%%#%s#%s %s"):format(hl_map[severity], signs[severity], count))
+                end
+            end
+            return table.concat(items, " ")
+        end
+    },
+
 })
