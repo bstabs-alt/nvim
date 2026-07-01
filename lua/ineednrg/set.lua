@@ -61,15 +61,40 @@ if vim.fn.executable("rg") then
 end
 
 local icon = {
-    vim = "",
-    v = "",
     star = "𐫰",
-    git = {
-        branch = '⎇'
+    dev = {
+        linux = { arch = "" },
+        bash = "",
+        c = "",
+        c_lang = "",
+        csharp = "",
+        css = "",
+        git = {
+            icon = "",
+            actions = "",
+            br = '⎇',
+            branch = "",
+            commit = "",
+            compare = "",
+            merge = "",
+        },
+        go = "",
+        lua = "",
+        markdown = "",
+        python = "",
+        rust = "",
+        terminal = "",
+        terraform = "",
+        javascript = "",
+        js_alt = "",
+        typescript = "",
+        vim = "",
+        vim_alt = "",
+        neovim = "",
+        zig = "",
     },
     lsp = {
         default = "■",
-        lua = "o",
     },
     gt = {
         s = "❭",
@@ -95,8 +120,38 @@ local modes = {
     r = "R-PENDING",
 }
 
+_G.get_lsp_client_name = function()
+    local clients = vim.lsp.get_clients()
+    if #clients >= 1 then return clients[1].name end
+    return ""
+end
+
+_G.lsp_progress = {}
+
+_G.set_lsp_progress = function(id, name, msg)
+    if msg == nil then msg = "D" end
+    _G.lsp_progress[id] = name .. " [" .. ((msg):sub(1, 1) or "A") .. "]"
+end
+
+_G.get_lsp_progress = function()
+    local lsp = table.concat(vim.tbl_values(_G.lsp_progress), "")
+    if lsp == "" then
+        lsp = _G.get_lsp_client_name()
+    end
+    return lsp
+end
+
+_G.get_git_branch = function()
+    local url = vim.system({ "git", "config", "get", "remote.origin.url" }):wait().stdout or ""
+    local repo = string.match(url, "/(%a+).git")
+    local branch = vim.system({ "git", "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout:gsub("\n$", "")
+    if repo == "" then return branch end
+    return string.format("%s/%s", repo, branch)
+end
+
+
 function _G.set_tabline()
-    local line = { "%#TabLineFill# ", icon.vim, " %<" }
+    local line = { "%#TabLineFill# ", icon.dev.vim_alt, " %<" }
     local curr = vim.api.nvim_get_current_tabpage()
     for _, tab_id in ipairs(vim.api.nvim_list_tabpages()) do
         if not vim.api.nvim_tabpage_is_valid(tab_id) then break end
@@ -130,34 +185,27 @@ end
 vim.o.showtabline = 2
 vim.go.tabline = [[%!v:lua.set_tabline()]]
 
-vim.o.winbar = "%#Visual# %t %#Normal#%=%#Visual# %{&filetype} "
-
-_G.lsp_progress = {}
-
-_G.set_lsp_progress = function(id, name, msg)
-    _G.lsp_progress[id] = name .. " [" .. (msg or "A") .. "] "
+_G.set_winbar = function()
+    return table.concat({
+        "%#Visual#",
+        " %t ",
+        "%#Normal#",
+        "%=",
+        "%#Visual# ",
+        icon.dev[vim.bo.filetype],
+        " %{&filetype} ",
+    })
 end
-
-_G.get_lsp_progress = function()
-    return table.concat(vim.tbl_values(_G.lsp_progress), "")
-end
-
-_G.get_git_branch = function()
-    local url = vim.system({ "git", "config", "get", "remote.origin.url" }):wait().stdout or ""
-    local repo = string.match(url, "/(%a+).git")
-    local branch = vim.system({ "git", "rev-parse", "--abbrev-ref", "HEAD" }):wait().stdout:gsub("\n$", "")
-    if repo == "" then return branch end
-    return string.format("%s/%s", repo, branch)
-end
-
+vim.o.winbar = [[%!v:lua.set_winbar()]]
 function _G.set_statusbar()
+    --(icon.lsp[vim.api.nvim_eval_statusline("%{&filetype}",{}).str ] or icon.lsp.default),
     return table.concat({
         "%#FloatShadow# ",
-        icon.v,
+        icon.dev.vim,
         " ",
         modes[vim.api.nvim_get_mode().mode] or "",
         " %#Visual# ",
-        icon.git.branch,
+        icon.dev.git.branch,
         " ",
         _G.get_git_branch(),
         " %#StatusLineNC#",
@@ -170,9 +218,11 @@ function _G.set_statusbar()
         " %t",
         " %h%w%m%r",
         "%=",
-        --(icon.lsp[vim.api.nvim_eval_statusline("%{&filetype}",{}).str ] or icon.lsp.default),
+        (icon.dev[vim.bo.filetype] or ""),
+        " ",
         _G.get_lsp_progress(),
-        (_G.get_lsp_progress() ~= "" and icon.lt.l or ""),
+        " ",
+        icon.lt.l,
         " %#Visual#",
         " %l:%-c%V ",
         "%#FloatShadow# ",
