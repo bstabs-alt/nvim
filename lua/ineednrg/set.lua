@@ -63,7 +63,7 @@ end
 local icon = {
     vim = "",
     v = "",
-    star = "𐫰 ",
+    star = "𐫰",
     git = {
         branch = '⎇'
     },
@@ -174,9 +174,10 @@ function _G.set_statusbar()
         _G.get_lsp_progress(),
         (_G.get_lsp_progress() ~= "" and icon.lt.l or ""),
         " %#Visual#",
-        " %l:%-2c%V ",
-        "%#FloatShadow#",
-        " %p%% ",
+        " %l:%-c%V ",
+        "%#FloatShadow# ",
+        icon.star,
+        "  %p%% ",
         "%#StatusLine#",
     })
 end

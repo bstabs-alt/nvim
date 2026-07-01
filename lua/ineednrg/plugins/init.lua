@@ -1,23 +1,24 @@
 if vim.fn.has("nvim-0.12") then
-    local specs = {
-        require("ineednrg.plugins.treesitter"),
-    }
-
-    if vim.env.NVIM_PROFILE == "dev" then
+    local specs = { require("ineednrg.plugins.treesitter") }
+    if vim.env.NVIM_PROFILE == "dev" or "work" then
         specs = vim.list_extend(specs, {
+            require("ineednrg.plugins.colours"),
             require("ineednrg.plugins.lsp"),
             require("ineednrg.plugins.colours"),
             require("ineednrg.plugins.fzf"),
             require("ineednrg.plugins.fugitive"),
             require("ineednrg.plugins.undotree"),
             require("ineednrg.plugins.which_key"),
+        })
+    end
+    if vim.env.NVIM_PROFILE == "dev" then
+        specs = vim.list_extend(specs, {
             --require("ineednrg.plugins.conform"),
             --require("ineednrg.plugins.mini"),
             --require("ineednrg.plugins.telescope"),
             --require("ineednrg.plugins.harpoon"),
         })
     end
-
     vim.pack.add(specs, {
         load = function(plug)
             vim.cmd.packadd(plug.spec.name)
