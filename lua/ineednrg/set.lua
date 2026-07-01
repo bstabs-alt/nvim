@@ -61,7 +61,6 @@ if vim.fn.executable("rg") then
 end
 
 local icon = {
-    star = "𐫰",
     dev = {
         linux = { arch = "" },
         bash = "",
@@ -129,7 +128,9 @@ end
 _G.lsp_progress = {}
 
 _G.set_lsp_progress = function(id, name, msg)
-    if msg == nil then msg = "D" end
+    if msg == nil then
+        msg = "D"
+    end
     _G.lsp_progress[id] = name .. " [" .. ((msg):sub(1, 1) or "A") .. "]"
 end
 
@@ -137,6 +138,9 @@ _G.get_lsp_progress = function()
     local lsp = table.concat(vim.tbl_values(_G.lsp_progress), "")
     if lsp == "" then
         lsp = _G.get_lsp_client_name()
+        if lsp == "" then
+            return vim.bo.filetype
+        end
     end
     return lsp
 end
@@ -150,7 +154,7 @@ _G.get_git_branch = function()
 end
 
 
-function _G.set_tabline()
+_G.set_tabline = function()
     local line = { "%#TabLineFill# ", icon.dev.vim_alt, " %<" }
     local curr = vim.api.nvim_get_current_tabpage()
     for _, tab_id in ipairs(vim.api.nvim_list_tabpages()) do
@@ -196,8 +200,10 @@ _G.set_winbar = function()
         " %{&filetype} ",
     })
 end
+
 vim.o.winbar = [[%!v:lua.set_winbar()]]
-function _G.set_statusbar()
+
+_G.set_statusbar = function()
     --(icon.lsp[vim.api.nvim_eval_statusline("%{&filetype}",{}).str ] or icon.lsp.default),
     return table.concat({
         "%#FloatShadow# ",
@@ -225,9 +231,8 @@ function _G.set_statusbar()
         icon.lt.l,
         " %#Visual#",
         " %l:%-c%V ",
-        "%#FloatShadow# ",
-        icon.star,
-        "  %p%% ",
+        "%#FloatShadow#",
+        " %p%% ",
         "%#StatusLine#",
     })
 end
