@@ -240,8 +240,7 @@ end
 
 vim.o.statusline = [[%!v:lua.set_statusbar()]]
 
-local is_wsl = vim.fn.has("wsl") == 1
-if is_wsl == 1 then
+if vim.fn.has("wsl") == 1 then
     vim.g.clipboard = {
         name = 'WslClipboard',
         copy = {
@@ -256,4 +255,7 @@ if is_wsl == 1 then
         },
         cache_enabled = 0,
     }
+    if vim.fn.has("xclip") == 0 then
+        print("Install xclip in WSL for clipboard to work.")
+    end
 end
