@@ -35,6 +35,7 @@ vim.opt.isfname:append("@-@")
 
 --local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
 local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
+_G.get_border_symbols = function() return symbols end
 local border = table.concat(symbols, ',')
 vim.o.winborder = border
 vim.o.winblend = 0

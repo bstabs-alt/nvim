@@ -17,6 +17,21 @@ vim.lsp.enable({
     --"helm","omnisharp","tailwindcss",
 })
 
+vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = { "*.zig", "*.zon" },
+    callback = function()
+        vim.lsp.buf.format()
+        --vim.lsp.buf.code_action({
+        --    context = { only = { "source.fixAll" } },
+        --    apply = true,
+        --})
+        --vim.lsp.buf.code_action({
+        --    context = { only = { "source.organizeImports" } },
+        --    apply = true,
+        --})
+    end,
+})
+
 local level = vim.diagnostic.severity
 local signs = {
     [level.ERROR] = "E",

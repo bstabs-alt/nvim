@@ -26,7 +26,9 @@ end, { desc = "Run code" })
 
 
 autocmd("UIEnter", {
-    callback = function() vim.o.clipboard = "unnamed,unnamedplus" end,
+    callback = function()
+        vim.o.clipboard = "unnamed" --"unnamed,unnamedplus"
+    end,
 })
 
 -- Highlight when yanking (copying) text -- Try with `yap`
@@ -87,7 +89,7 @@ local function set_floating_win_cfg(winid)
     if winid and vim.api.nvim_win_is_valid(winid) then
         vim.api.nvim_win_set_config(winid, {
             border = vim.split(vim.o.winborder, ",") or "rounded",
-            width = math.min(70, vim.api.nvim_win_get_width(winid)),
+            width = math.min(60, vim.api.nvim_win_get_width(winid)),
             height = math.min(15, vim.api.nvim_win_text_height(winid, {}).all),
             style = "minimal",
         })
@@ -99,7 +101,9 @@ local complete_set = vim.api.nvim__complete_set
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.api.nvim__complete_set = function(index, opts)
     local item = complete_set(index, opts)
-    if item then set_floating_win_cfg(item.winid) end
+    if item then
+        set_floating_win_cfg(item.winid)
+    end
     return item
 end
 
@@ -116,35 +120,45 @@ autocmd("LspAttach", {
     callback = function(ev)
         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
         local buf = ev.buf
-        vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
-        --vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
-        vim.keymap.set("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
-        vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
-        --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
-        vim.keymap.set("n", "glh", function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-        end, { desc = "toggle inlay hints", buf = buf })
-        vim.keymap.set("n", "glc", function()
-            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled())
-        end, { desc = "toggle codelens", buf = buf })
-        vim.keymap.set("n", "gli", function()
-            vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled())
-        end, { expr = true, desc = "inline completion" })
-        vim.keymap.set("i", "<Tab>", function()
-            if not vim.lsp.inline_completion.get() then return "<Tab>" end
-        end, { expr = true, desc = "inline completion" })
         -- defaults
         --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
         --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
         --vim.keymap.set("n", "[d", vim.diagnostic.get_prev)
         --vim.keymap.set("n", "]d", vim.diagnostic.get_next)
+        vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
+        --vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
+        vim.keymap.set("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
+        vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
+        --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
+
+        vim.keymap.set("n", "glh", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+        end, { desc = "toggle inlay hints", buf = buf })
+
+        vim.keymap.set("n", "glc", function()
+            vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled())
+        end, { desc = "toggle codelens", buf = buf })
+
+        vim.keymap.set("n", "gli", function()
+            vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled())
+        end, { expr = true, desc = "inline completion" })
+
+        vim.keymap.set("i", "<Tab>", function()
+            if not vim.lsp.inline_completion.get() then
+                return "<Tab>"
+            end
+        end, { expr = true, desc = "inline completion" })
+
         if client:supports_method("textDocument/completion") then
             vim.lsp.completion.enable(true, client.id, buf, {
                 autotrigger = true,
                 --convert = function(item) return { abbr = item.label:gsub('%b()', '') } end
             })
+
             vim.keymap.set("i", "<BS>", function()
-                if vim.fn.pumvisible() == 1 then return "<BS><C-x><C-o>" end
+                if vim.fn.pumvisible() == 1 then
+                    return "<BS><C-x><C-o>"
+                end
                 return "<BS>"
             end, { expr = true, noremap = true })
         end
@@ -152,10 +166,9 @@ autocmd("LspAttach", {
         autocmd("LspProgress", {
             group = nrg_group,
             buffer = buf,
-            callback = function(lsp_ev)
-                local val = lsp_ev.data.params.value
-                _G.set_lsp_progress(lsp_ev.data.client_id, client.name, val.message)
-                --_G.lsp_progress[lsp_ev.data.client_id] = client.name .. " [" .. (val.message or "A") .. "]"
+            callback = function(args)
+                local val = args.data.params.value
+                _G.set_lsp_progress(args.data.client_id, client.name, val.message)
                 vim.cmd("redrawstatus")
             end
         })

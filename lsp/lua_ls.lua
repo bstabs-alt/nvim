@@ -8,12 +8,16 @@ return {
     },
     on_init = function(client)
         local root = client.root_dir or ""
-        if root:find(vim.fn.stdpath("config"), 1, true) or root:find("/nvim", 1, true) then
+        if root:find(vim.fn.stdpath("config"), 1, true) or
+            root:find("/nvim", 1, true)
+        then
             --- @type lspconfig.settings.lua_ls
             local settings = client.config.settings
             settings.Lua.workspace.library = vim.api.nvim_get_runtime_file("lua", true)
             client.config.settings = settings
-            client:notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+            client:notify("workspace/didChangeConfiguration", {
+                settings = client.config.settings
+            })
         end
     end,
     --- @type lspconfig.settings.lua_ls
