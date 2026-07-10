@@ -24,10 +24,16 @@ usercmd("RunZig", function()
     print(vim.system({ "zig", "run", filename }):wait().stdout)
 end, { desc = "Run code" })
 
+usercmd("LspCompletionInfo", function(args)
+    local pos_params = vim.lsp.util.make_position_params(0, "utf-8")
+    vim.lsp.buf_request(0, 'textDocument/completion', pos_params, function(_, result)
+        vim.fn.setreg(args.reg or "*", vim.inspect(result))
+    end)
+end, { desc = "Get LSP completion info for the current buffer" })
 
 autocmd("UIEnter", {
     callback = function()
-        vim.o.clipboard = "unnamed" --"unnamed,unnamedplus"
+        vim.o.clipboard = "unnamed,unnamedplus"
     end,
 })
 
