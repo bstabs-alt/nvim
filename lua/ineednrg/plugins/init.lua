@@ -3,7 +3,7 @@ if vim.fn.has("nvim-0.12") then
     if vim.env.NVIM_PROFILE == "dev" or "work" then
         specs = vim.list_extend(specs, {
             require("ineednrg.plugins.colours"),
-            require("ineednrg.plugins.lsp"),
+            --require("ineednrg.plugins.lsp"),
             require("ineednrg.plugins.colours"),
             require("ineednrg.plugins.fzf"),
             require("ineednrg.plugins.fugitive"),

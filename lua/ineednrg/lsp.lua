@@ -6,15 +6,21 @@ vim.g.zig_fmt_parse_errors = 0
 vim.g.zig_fmt_autosave = 0
 
 vim.lsp.enable({
+    "asm_lsp",
+    "azure_pipelines_ls", -- npm install -g azure-pipelines-language-server
     "bashls",
+    "clangd",
     "lua_ls",
     "gopls",
+    "roslyn_ls",
     "rust_analyzer",
     "systemd_lsp",
+    "tailwindcss", -- npm install -g @tailwindcss/language-server
     "terraformls",
     "templ",
+    "roslyn_ls", -- dotnet tools install --global roslyn-language-server --prerelease
     "zls",
-    --"helm","omnisharp","tailwindcss",
+    --"helm",
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -67,5 +73,4 @@ vim.diagnostic.config({
             return table.concat(items, " ")
         end
     },
-
 })

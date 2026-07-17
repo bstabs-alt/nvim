@@ -56,6 +56,15 @@ autocmd("FileType", {
     end
 })
 
+autocmd("FileType", {
+    pattern = "json",
+    callback = function()
+        vim.keymap.set("n", "grf", function()
+            vim.cmd('%!jq "."')
+        end, { desc = "jq format" })
+    end,
+})
+
 if vim.fn.executable('fcitx5-remote') == 1 then
     Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
     autocmd("InsertLeave", {
@@ -127,8 +136,7 @@ autocmd("LspAttach", {
         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
         local buf = ev.buf
         -- defaults
-        --vim.keymap.set("n", "g0", vim.lsp.buf.document_symbol)
-        --vim.keymap.set("i", "c-s", vim.lsp.buf.signature_help)
+        --vim.keymap.set("i", "<c-s>", vim.lsp.buf.signature_help)
         --vim.keymap.set("n", "[d", vim.diagnostic.get_prev)
         --vim.keymap.set("n", "]d", vim.diagnostic.get_next)
         vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })

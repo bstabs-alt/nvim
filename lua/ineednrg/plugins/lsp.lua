@@ -25,15 +25,6 @@ return {
                 -- 'dcampos/cmp-snippy'
             })
 
-            vim.lsp.enable({
-                -- npm install -g azure-pipelines-language-server
-                "azure_pipelines_ls",
-                -- dotnet tools install --global roslyn-language-server --prerelease
-                "roslyn_ls",
-                -- npm install -g @tailwindcss/language-server
-                "tailwindcss"
-            })
-
             local cmp = require("cmp")
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
             vim.lsp.config("*", { capabilities = capabilities })
