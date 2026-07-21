@@ -2,9 +2,11 @@
 ---@type vim.lsp.Config
 return {
     cmd = { "asm-lsp" },
-    filetypes = { "asm", "vmasm" },
+    filetypes = { "asm", "s", "S", "vmasm" },
     root_markers = { ".asm-lsp.toml", ".git" },
-    --- @type lspconfig.settings.asm_lsp
+    ---@type lspconfig.settings.asm_lsp
     settings = {
+        asm_lsp = {
+        },
     },
 }
