@@ -29,7 +29,7 @@ usercmd("LspCompletionInfo", function(args)
     vim.lsp.buf_request(0, 'textDocument/completion', pos_params, function(_, result)
         vim.fn.setreg(args.reg or "*", vim.inspect(result))
     end)
-end, { desc = "Get LSP completion info for the current buffer" })
+end, { desc = "Insert LSP completion info for the current buffer in a vim register" })
 
 autocmd("UIEnter", {
     callback = function()
@@ -65,11 +65,27 @@ autocmd("FileType", {
     end,
 })
 
+autocmd("FileType", {
+    group = nrg_group,
+    pattern = "markdown",
+    callback = function(args)
+        vim.treesitter.stop(args.buf)
+        vim.bo[args.buf].syntax = "markdown"
+        vim.opt_local.conceallevel = 2
+        vim.opt_local.concealcursor = ""
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+        vim.opt_local.breakindent = true
+        vim.opt_local.spell = true
+        vim.opt_local.spellcapcheck = ""
+    end,
+})
+
 if vim.fn.executable('fcitx5-remote') == 1 then
     Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
     autocmd("InsertLeave", {
         group = nrg_group,
-        desc = "Inactivate IME mode",
+        desc = "Deactivate IME mode",
         pattern = "*",
         callback = function()
             Fcitx5state = vim.system({ "fcitx5-remote" }):wait().stdout:sub(1, 1)
@@ -111,7 +127,8 @@ local function set_floating_win_cfg(winid)
     end
 end
 
--- Add border to first completion item without having to add a delay on CompleteChanged
+-- Add border to first completion item without having to add a delay
+-- on CompleteChanged event.
 local complete_set = vim.api.nvim__complete_set
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.api.nvim__complete_set = function(index, opts)
@@ -130,19 +147,43 @@ autocmd("CompleteChanged", {
     end
 })
 
+local CIK = vim.lsp.protocol.CompletionItemKind
+
+local hl_override = {
+    Field = '@variable.member',
+    Module = '@module',
+    Constant = '@constant',
+    Constructor = '@constructor',
+    Text = '@string',
+    Value = '@number',
+    Unit = '@type',
+    Snippet = '@keyword',
+    Color = '@constant',
+    File = '@string.special.path',
+    Folder = '@string.special.path',
+    Reference = '@variable',
+}
+
+local hl_special_cases = {
+    zls = function(item)
+        if item.detail == "type" and item.label:match("^%l") then -- %l = lower
+            return "@module"
+        end
+    end
+}
+
 autocmd("LspAttach", {
     group = nrg_group,
     callback = function(ev)
         local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
         local buf = ev.buf
-        -- defaults
         --vim.keymap.set("i", "<c-s>", vim.lsp.buf.signature_help)
         --vim.keymap.set("n", "[d", vim.diagnostic.get_prev)
         --vim.keymap.set("n", "]d", vim.diagnostic.get_next)
-        vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
+        vim.keymap.set("n", "grd", vim.lsp.buf.definition, { desc = "vim.lsp.buf.definition" })
         --vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, { desc = "vim.lsp.buf.declaration" })
         vim.keymap.set("n", "grf", vim.lsp.buf.format, { desc = "vim.lsp.buf.format" })
-        vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
+        vim.keymap.set("n", "gd", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
         --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
 
         vim.keymap.set("n", "glh", function()
@@ -166,9 +207,26 @@ autocmd("LspAttach", {
         if client:supports_method("textDocument/completion") then
             vim.lsp.completion.enable(true, client.id, buf, {
                 autotrigger = true,
-                --convert = function(item) return { abbr = item.label:gsub('%b()', '') } end
-            })
+                convert = function(item)
+                    if item.kind == CIK.Color then
+                        return {}
+                    end
+                    local kind = CIK[item.kind]
+                    local hl = kind and (hl_override[kind] or ("@lsp.type." .. kind))
+                    ---@type vim.v.completed_item
+                    local user_item = {
+                        abbr_hlgroup = hl_special_cases[client.name](item) or hl,
+                        kind_hlgroup = hl,
+                    }
 
+                    local label = vim.tbl_get(item, "label") or ""
+                    local ld = vim.tbl_get(item, "labelDetails", "detail") or ""
+                    if (label:len() + ld:len()) > math.max(vim.o.pummaxwidth, 30) - 14 then
+                        user_item.abbr = item.label
+                    end
+                    return user_item
+                end,
+            })
             vim.keymap.set("i", "<BS>", function()
                 if vim.fn.pumvisible() == 1 then
                     return "<BS><C-x><C-o>"
@@ -203,3 +261,4 @@ autocmd("LspAttach", {
 
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
+vim.g.markdown_fenced_languages = { "tex", "python", "rust", "bash=sh", "json", "yaml" }

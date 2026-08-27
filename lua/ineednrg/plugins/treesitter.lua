@@ -3,20 +3,14 @@ return {
     ver = "0.15.0",
     data = {
         setup = function()
-            --require("nvim-treesitter").setup({
-            --    install_dir = vim.fn.stdpath("data") .. "/site",
-            --    ensure_installed = { "bash", "c", "go", "javascript", "lua", "rust", "zig", "html", "css" },
-            --    sync_install = false,
-            --    auto_install = true,
-            --    highlight = { enable = true },
-            --})
-
             vim.api.nvim_create_autocmd("FileType", {
-                pattern = { "<filetype>" },
-                callback = function()
+                callback = function(args)
+                    local ft = vim.bo[args.buf].filetype
+                    if ft == "markdown" or ft == "tex" or ft == "plaintex" then return end
+                    local lang = vim.treesitter.language.get_lang(ft)
+                    if not lang or not vim.treesitter.language.add(lang) then return end
+
                     vim.treesitter.start()
-                    vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-                    vim.wo.foldmethod = "expr"
                     vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
                     vim.wo[0][0].foldexpr = 'v:lua.vim.treesitter.foldexpr()'
                     vim.wo[0][0].foldmethod = 'expr'

@@ -16,6 +16,7 @@ vim.o.swapfile = false
 vim.o.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.o.undofile = true
+vim.opt.spellfile = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
 
 vim.o.hlsearch = false
 vim.o.incsearch = true
@@ -32,11 +33,15 @@ vim.o.cursorline = true    -- Highlight the line where the cursor is on.
 vim.o.scrolloff = 8        -- Keep this many screen lines above/below the cursor.
 vim.o.confirm = true
 vim.opt.isfname:append("@-@")
+vim.o.foldlevel = 99
 
 --local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
 local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
-_G.get_border_symbols = function() return symbols end
+_G.get_border_symbols = function()
+    return symbols
+end
 local border = table.concat(symbols, ',')
+
 vim.o.winborder = border
 vim.o.winblend = 0
 vim.o.pumborder = border
@@ -79,6 +84,8 @@ local icon = {
             merge = "",
         },
         go = "",
+        latex = "",
+        tex = "",
         lua = "",
         markdown = "",
         python = "",
