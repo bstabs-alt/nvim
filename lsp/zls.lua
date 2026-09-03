@@ -10,7 +10,6 @@ return {
             enable_autofix = true,
             enable_import_embedfile_argument_completions = true,
             enable_inlay_hints = true,
-            enable_snippets = true,
             warn_style = true,
             inlay_hints_hide_redundant_param_names = true,
             inlay_hints_hide_redundant_param_names_last_token = true,

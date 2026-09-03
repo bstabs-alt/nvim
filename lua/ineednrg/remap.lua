@@ -55,6 +55,9 @@ map("n", "<leader>ri", function()
         { row = 5, col = 10, width = 100, height = 50, zindex = 50 })
 end, { desc = "render img" })
 
+local notes = vim.fn.expand("~/notes/all-things-one-place")
+map("n", "<leader>vv", "<cmd>edit" .. notes .. "/index.md<CR>:lcd %:p:h<CR>")  --opts("Open"))
+
 -- <gc>: Toggle comment
 -- <gcc>: Toggle comment line
 

@@ -1,6 +1,7 @@
 require("ineednrg.remap")
 require("ineednrg.set")
 require("ineednrg.lsp")
+require("ineednrg.ui")
 require("ineednrg.plugins")
 
 local augroup = vim.api.nvim_create_augroup
@@ -69,15 +70,17 @@ autocmd("FileType", {
     group = nrg_group,
     pattern = "markdown",
     callback = function(args)
-        vim.treesitter.stop(args.buf)
-        vim.bo[args.buf].syntax = "markdown"
         vim.opt_local.conceallevel = 2
-        vim.opt_local.concealcursor = ""
-        vim.opt_local.wrap = true
-        vim.opt_local.linebreak = true
-        vim.opt_local.breakindent = true
         vim.opt_local.spell = true
+        vim.opt_local.concealcursor = ""
+        vim.opt_local.linebreak = true
+        vim.opt_local.wrap = true
+        vim.opt_local.breakindent = true
+        --[[
+        vim.bo[args.buf].syntax = "markdown"
+        vim.treesitter.stop(args.buf)
         vim.opt_local.spellcapcheck = ""
+--]]
     end,
 })
 
@@ -186,9 +189,13 @@ autocmd("LspAttach", {
         vim.keymap.set("n", "gd", vim.diagnostic.open_float, { desc = "vim.lsp.buf.open_float" })
         --vim.keymap.set("n", "<leader>pw", vim.lsp.buf.workspace_symbol, { desc = "workspace symbol" })
 
-        vim.keymap.set("n", "glh", function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-        end, { desc = "toggle inlay hints", buf = buf })
+        if client:supports_method("textDocument/inlayHint") then
+            vim.keymap.set("n", "glh", function()
+                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+            end, { desc = "toggle inlay hints", buf = buf })
+
+            vim.lsp.inlay_hint.enable(true)
+        end
 
         vim.keymap.set("n", "glc", function()
             vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled())
@@ -213,9 +220,11 @@ autocmd("LspAttach", {
                     end
                     local kind = CIK[item.kind]
                     local hl = kind and (hl_override[kind] or ("@lsp.type." .. kind))
+
+                    local special = hl_special_cases[client.name]
                     ---@type vim.v.completed_item
                     local user_item = {
-                        abbr_hlgroup = hl_special_cases[client.name](item) or hl,
+                        abbr_hlgroup = special and special(item) or hl,
                         kind_hlgroup = hl,
                     }
 
