@@ -2,10 +2,10 @@ if vim.fn.has("nvim-0.12") then
     ---@type table<vim.pack.Spec, string>
     local specs = { require("ineednrg.plugins.treesitter") }
     local p = vim.env.NVIM_PROFILE
-    --vim.cmd('packadd! nohlsearch')
     if p == "dev" or p == "work" then
         specs = vim.list_extend(specs, {
             { packadd = "nohlsearch" },
+            require("ineednrg.plugins.colours"),
             require("ineednrg.plugins.debugger"),
             {
                 src = 'https://github.com/stevearc/quicker.nvim',
@@ -15,8 +15,7 @@ if vim.fn.has("nvim-0.12") then
                 src = 'https://github.com/lewis6991/gitsigns.nvim',
                 data = { setup = function() require('gitsigns').setup {} end }
             },
-            require("ineednrg.plugins.colours"),
-            --require("ineednrg.plugins.hardtime"),
+            ----require("ineednrg.plugins.hardtime"),
             require("ineednrg.plugins.lsp"),
             require("ineednrg.plugins.fzf"),
             require("ineednrg.plugins.fugitive"),
@@ -24,10 +23,11 @@ if vim.fn.has("nvim-0.12") then
             require("ineednrg.plugins.vimtex"),
             require("ineednrg.plugins.which_key"),
             require("ineednrg.plugins.markdown"),
-            --require("ineednrg.plugins.conform"),
-            --require("ineednrg.plugins.mini"),
-            --require("ineednrg.plugins.telescope"),
-            --require("ineednrg.plugins.harpoon"),
+
+            ----require("ineednrg.plugins.conform"),
+            ----require("ineednrg.plugins.mini"),
+            ----require("ineednrg.plugins.telescope"),
+            ----require("ineednrg.plugins.harpoon"),
         })
     end
 
@@ -42,7 +42,6 @@ if vim.fn.has("nvim-0.12") then
             end
         end
     end
-
     local remote = {}
     for _, spec in ipairs(specs) do
         if spec.src then

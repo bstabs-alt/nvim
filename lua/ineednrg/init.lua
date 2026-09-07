@@ -14,6 +14,12 @@ local yank_group = augroup('HighlightYank', {})
 vim.filetype.add({ extension = { templ = "templ" } })
 vim.filetype.add({ extension = { tfstate = "json" } })
 
+autocmd("UIEnter", {
+    callback = function()
+        vim.o.clipboard = "unnamed,unnamedplus"
+    end,
+})
+
 usercmd("GitBlameLine", function()
     local line_number = vim.fn.line(".") -- Get curr line numb. See :h line()
     local filename = vim.api.nvim_buf_get_name(0)
@@ -31,12 +37,6 @@ usercmd("LspCompletionInfo", function(args)
         vim.fn.setreg(args.reg or "*", vim.inspect(result))
     end)
 end, { desc = "Insert LSP completion info for the current buffer in a vim register" })
-
-autocmd("UIEnter", {
-    callback = function()
-        vim.o.clipboard = "unnamed,unnamedplus"
-    end,
-})
 
 -- Highlight when yanking (copying) text -- Try with `yap`
 autocmd("TextYankPost", {
@@ -80,7 +80,7 @@ autocmd("FileType", {
         vim.bo[args.buf].syntax = "markdown"
         vim.treesitter.stop(args.buf)
         vim.opt_local.spellcapcheck = ""
---]]
+        --]]
     end,
 })
 
@@ -193,8 +193,6 @@ autocmd("LspAttach", {
             vim.keymap.set("n", "glh", function()
                 vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
             end, { desc = "toggle inlay hints", buf = buf })
-
-            vim.lsp.inlay_hint.enable(true)
         end
 
         vim.keymap.set("n", "glc", function()

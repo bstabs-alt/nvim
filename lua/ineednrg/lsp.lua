@@ -7,13 +7,13 @@ vim.lsp.enable({
     "azure_pipelines_ls", -- npm install -g azure-pipelines-language-server
     "bashls",
     "clangd",
+    "cssls",
     "lua_ls",
     "gopls",
     --"helm",
     "roslyn_ls", -- dotnet tools install --global roslyn-language-server --prerelease
     "rust_analyzer",
     "systemd_lsp",
-    "tailwindcss", -- npm install -g @tailwindcss/language-server
     "terraformls",
     "templ",
     "zls",

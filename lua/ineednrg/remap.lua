@@ -1,6 +1,12 @@
+local map = vim.keymap.set
 vim.g.mapleader = " "
 
-local map = vim.keymap.set
+--[[
+-- <gc>: Toggle comment
+-- <gcc>: Toggle comment line
+-- <i_CTRL-V_digit>[ u | U ]: unicode 4 and 8 bytes respectively
+-- <i_CTRL-Shift-U>: unicode input with ghostty
+--]]
 
 map("n", "<Esc>", "<cmd>nohlsearch<CR>")
 map("t", "<Esc>", "<C-\\><C-n>") -- exit terminal mode
@@ -56,10 +62,9 @@ map("n", "<leader>ri", function()
 end, { desc = "render img" })
 
 local notes = vim.fn.expand("~/notes/all-things-one-place")
-map("n", "<leader>vv", "<cmd>edit" .. notes .. "/index.md<CR>:lcd %:p:h<CR>")  --opts("Open"))
-
--- <gc>: Toggle comment
--- <gcc>: Toggle comment line
+map("n", "<leader>vv", "<cmd>edit" .. notes .. "/index.md<CR>:lcd %:p:h<CR>") --opts("Open"))
 
 -- Windows terminal paste from clipboard
-map("i", "<C-v>", "<C-r>+", { desc = "WinTerm Paste" })
+if vim.fn.has("wsl") == 1 then
+    map("i", "<C-v>", "<C-r>+", { desc = "WinTerm Paste" })
+end

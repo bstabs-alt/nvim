@@ -36,7 +36,8 @@ vim.opt.isfname:append("@-@")
 vim.o.foldlevel = 99
 
 --local symbols = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
-local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
+local symbols = { "┍", "━", "┑", "│", "┙", "━", "┕", "│" }
+-- local symbols = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" }
 _G.get_border_symbols = function()
     return symbols
 end

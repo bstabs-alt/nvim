@@ -3,6 +3,9 @@ return {
     cmd = { "zls" },
     filetypes = { "zig", "zir" },
     root_markers = { "zls.json", "build.zig", ".git" },
+    on_attach = function(client, bufnr)
+        vim.lsp.inlay_hint.enable(true)
+    end,
     --- @type lspconfig.settings.zls
     settings = {
         zls = {
