@@ -5,6 +5,7 @@ if vim.fn.has("nvim-0.12") then
     if p == "dev" or p == "work" then
         specs = vim.list_extend(specs, {
             { packadd = "nohlsearch" },
+            { packadd = "cfilter" },
             require("ineednrg.plugins.colours"),
             require("ineednrg.plugins.debugger"),
             {
