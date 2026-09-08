@@ -1,4 +1,4 @@
-require("ineednrg.remap")
+require("ineednrg.map")
 require("ineednrg.set")
 require("ineednrg.lsp")
 require("ineednrg.ui")
@@ -11,8 +11,12 @@ local usercmd = vim.api.nvim_create_user_command
 local nrg_group = augroup('ineednrg', {})
 local yank_group = augroup('HighlightYank', {})
 
-vim.filetype.add({ extension = { templ = "templ" } })
-vim.filetype.add({ extension = { tfstate = "json" } })
+vim.filetype.add({
+    extension = {
+        templ = "templ",
+        tfstate = "json",
+    }
+})
 
 autocmd("UIEnter", {
     callback = function()
@@ -268,4 +272,4 @@ autocmd("LspAttach", {
 
 vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
-vim.g.markdown_fenced_languages = { "tex", "python", "rust", "bash=sh", "json", "yaml" }
+-- vim.g.markdown_fenced_languages = { "tex", "python", "rust", "bash=sh", "json", "yaml" }

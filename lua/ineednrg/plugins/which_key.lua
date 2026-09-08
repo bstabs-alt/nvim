@@ -7,7 +7,7 @@ return {
                 ---@type  wk.Spec
                 spec = {},
                 preset = "helix",
-                expand = 1,
+                expand = 3,
                 layout = {
                     spacing = 3,
                     width = { min = 20, max = 40 }
@@ -17,12 +17,11 @@ return {
                     anchor = "NW",
                     --border = table.concat(_G.get_border_symbols(), ","),
                     border = "single",
-
                 },
                 plugins = {
                     registers = true,
                     marks = true,
-                    spelling = { enbaled = true, suggestions = 20 },
+                    spelling = { enabled = true, suggestions = 20 },
                     presets = {
                         operators = true,
                         motions = true,

@@ -75,15 +75,7 @@ local icon = {
         c_lang = "",
         csharp = "",
         css = "",
-        git = {
-            icon = "",
-            actions = "",
-            br = '⎇',
-            branch = "",
-            commit = "",
-            compare = "",
-            merge = "",
-        },
+        git = { icon = "", actions = "", br = '⎇', branch = "", commit = "", compare = "", merge = "" },
         go = "",
         latex = "",
         tex = "",
@@ -101,20 +93,9 @@ local icon = {
         neovim = "",
         zig = "",
     },
-    lsp = {
-        default = "■",
-    },
-    gt = {
-        s = "❭",
-        m = "❯",
-        l = "❱",
-        x = "⇒",
-    },
-    lt = {
-        s = "❬",
-        m = "❮",
-        l = "❰",
-    },
+    lsp = { default = "■" },
+    gt = { s = "❭", m = "❯", l = "❱", x = "⇒" },
+    lt = { s = "❬", m = "❮", l = "❰" },
 }
 local modes = {
     n = "NORMAL",
@@ -135,7 +116,6 @@ _G.get_lsp_client_name = function()
 end
 
 _G.lsp_progress = {}
-
 _G.set_lsp_progress = function(id, name, msg)
     if msg == nil then
         msg = "D"
