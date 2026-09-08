@@ -11,6 +11,7 @@ vim.lsp.enable({
     "lua_ls",
     "gopls",
     --"helm",
+    "pyright",
     "roslyn_ls", -- dotnet tools install --global roslyn-language-server --prerelease
     "rust_analyzer",
     "systemd_lsp",
